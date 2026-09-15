@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_quick_note_user,quick.note.user,model_quick_note,base.group_user,1,1,1,1
+access_quick_note_stage_user,quick.note.stage.user,model_quick_note_stage,base.group_user,1,1,1,1
+access_quick_note_tag_user,quick.note.tag.user,model_quick_note_tag,base.group_user,1,1,1,1

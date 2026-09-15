@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="quick_note_view_list" model="ir.ui.view">
+        <field name="name">quick.note.list</field>
+        <field name="model">quick.note</field>
+        <field name="arch" type="xml">
+            <list string="Quick Notes" default_order="is_pinned desc, priority desc, write_date desc">
+                <field name="is_pinned" widget="boolean_favorite" nolabel="1"/>
+                <field name="name"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="priority" widget="priority"/>
+                <field name="stage_id"/>
+                <field name="deadline" optional="show"/>
+                <field name="user_id" optional="hide"/>
+                <field name="write_date" string="Modifié le"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="quick_note_view_form" model="ir.ui.view">
+        <field name="name">quick.note.form</field>
+        <field name="model">quick.note</field>
+        <field name="arch" type="xml">
+            <form string="Note">
+                <header>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '1', 'fold_field': 'fold'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="is_pinned" widget="boolean_favorite" nolabel="1"/>
+                            <field name="name" placeholder="Titre de la note"/>
+                        </h1>
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" placeholder="Ajouter des étiquettes..."/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="priority" widget="priority"/>
+                            <field name="deadline"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contenu">
+                            <field name="content"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="quick_note_view_kanban" model="ir.ui.view">
+        <field name="name">quick.note.kanban</field>
+        <field name="model">quick.note</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="stage_id" class="o_kanban_small_column" on_create="quick_create">
+                <field name="stage_id"/>
+                <field name="priority"/>
+                <field name="deadline"/>
+                <templates>
+                    <t t-name="menu">
+                        <a role="menuitem" type="edit" class="dropdown-item">Modifier</a>
+                        <a role="menuitem" type="delete" class="dropdown-item">Supprimer</a>
+                    </t>
+                    <t t-name="card">
+                        <main>
+                            <div class="d-flex justify-content-between">
+                                <field name="name" class="fw-bold fs-5"/>
+                                <field name="is_pinned" widget="boolean_favorite" nolabel="1"/>
+                            </div>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field t-if="record.deadline.raw_value" name="deadline" widget="remaining_days"/>
+                            <footer class="pt-1">
+                                <field name="priority" widget="priority"/>
+                                <div class="d-flex ms-auto align-items-center">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                </div>
+                            </footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="quick_note_view_search" model="ir.ui.view">
+        <field name="name">quick.note.search</field>
+        <field name="model">quick.note</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une note">
+                <field name="name" string="Titre"
+                       filter_domain="['|', ('name', 'ilike', self), ('content', 'ilike', self)]"/>
+                <field name="user_id"/>
+                <field name="stage_id"/>
+                <field name="tag_ids"/>
+                <separator/>
+                <filter string="Épinglées" name="filter_pinned" domain="[('is_pinned', '=', True)]"/>
+                <separator/>
+                <filter string="Normal" name="filter_priority_normal" domain="[('priority', '=', '0')]"/>
+                <filter string="Important" name="filter_priority_important" domain="[('priority', '=', '1')]"/>
+                <filter string="Urgent" name="filter_priority_urgent" domain="[('priority', '=', '2')]"/>
+                <separator/>
+                <filter string="En retard" name="filter_overdue" domain="[('deadline', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group>
+                    <filter string="Statut" name="group_by_stage" context="{'group_by': 'stage_id'}"/>
+                    <filter string="Priorité" name="group_by_priority" context="{'group_by': 'priority'}"/>
+                    <filter string="Étiquette" name="group_by_tag" context="{'group_by': 'tag_ids'}"/>
+                    <filter string="Propriétaire" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="quick_note_action" model="ir.actions.act_window">
+        <field name="name">Mes notes</field>
+        <field name="res_model">quick.note</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="quick_note_view_search"/>
+        <field name="domain">[('user_id', '=', uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre première note rapide
+            </p>
+        </field>
+    </record>
+
+</odoo>

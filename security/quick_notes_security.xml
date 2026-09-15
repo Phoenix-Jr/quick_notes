@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="quick_note_rule_own_notes" model="ir.rule">
+        <field name="name">Quick Note: notes personnelles uniquement</field>
+        <field name="model_id" ref="model_quick_note"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>

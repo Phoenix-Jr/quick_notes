@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_quick_notes_root"
+              name="Quick Notes"
+              sequence="60"
+              web_icon="quick_notes,static/description/icon.png"/>
+
+    <menuitem id="menu_quick_notes_my_notes"
+              name="Mes notes"
+              parent="menu_quick_notes_root"
+              action="quick_note_action"
+              sequence="10"/>
+
+    <menuitem id="menu_quick_notes_configuration"
+              name="Configuration"
+              parent="menu_quick_notes_root"
+              sequence="90"/>
+
+    <menuitem id="menu_quick_notes_stages"
+              name="Statuts"
+              parent="menu_quick_notes_configuration"
+              action="quick_note_stage_action"
+              sequence="10"/>
+
+    <menuitem id="menu_quick_notes_tags"
+              name="Étiquettes"
+              parent="menu_quick_notes_configuration"
+              action="quick_note_tag_action"
+              sequence="20"/>
+
+</odoo>
